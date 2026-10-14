@@ -47,6 +47,7 @@ const PRAISE = [
 var collect_type := -1
 var collect_goal := 0
 var collected := 0
+var goal_label: Label
 
 func _ready() -> void:
 	randomize()
@@ -132,7 +133,7 @@ func create_hud() -> void:
 	moves_label.add_theme_color_override("font_color", Color("#5C3A21"))
 	moves_circle.add_child(moves_label)
 
-	# --- Derecha: meta ---
+		# --- Derecha: meta ---
 	var goal_panel = Panel.new()
 	goal_panel.size = Vector2(100, 56)
 	goal_panel.position = Vector2(screen.x - 114, 14)
@@ -140,7 +141,7 @@ func create_hud() -> void:
 	goal_panel.add_theme_stylebox_override("panel", make_style(Color("#6B4226"), 14))
 	hud_layer.add_child(goal_panel)
 
-	var goal_label = Label.new()
+	goal_label = Label.new()
 	goal_label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	goal_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	goal_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -175,6 +176,17 @@ func update_hud() -> void:
 	moves_label.text = str(moves)
 	var t = create_tween()
 	t.tween_property(score_bar, "value", progress(), 0.3)
+
+	if collect_goal > 0:
+		var left = max(collect_goal - collected, 0)
+		var new_text = "Junta\n%d" % left
+		if goal_label.text != new_text:
+			goal_label.text = new_text
+			goal_label.pivot_offset = goal_label.size / 2.0
+			var p = create_tween()
+			p.tween_property(goal_label, "scale", Vector2(1.25, 1.25), 0.08)
+			p.tween_property(goal_label, "scale", Vector2.ONE, 0.12)
+	
 # ---------- LAYOUT ----------
 
 func setup_layout() -> void:
@@ -263,7 +275,6 @@ func _input(event: InputEvent) -> void:
 func pixel_to_grid(pos: Vector2) -> Vector2i:
 	var local = pos - board_offset
 	return Vector2i(floor(local.x / cell_size), floor(local.y / cell_size))
-
 
 func is_valid_cell(c: Vector2i) -> bool:
 	return c.x >= 0 and c.x < GRID_WIDTH and c.y >= 0 and c.y < GRID_HEIGHT

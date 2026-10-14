@@ -5,6 +5,7 @@ const FONT = preload("res://assets/fonts/Papernotes Sketch.ttf")
 const BOARD_SCENE := "res://scenes/board/Board.tscn"
 const MINIGAME_SCENE := "res://scenes/minigame/CanelaGame.tscn"
 
+const CLOSET_SCENE := "res://scenes/closet/Closet.tscn"
 
 func _ready() -> void:
 	var screen = get_viewport_rect().size
@@ -24,7 +25,7 @@ func _ready() -> void:
 	for i in pts.size():
 		add_level(i, pts[i])
 
-	add_minigame_button(screen)
+	add_bottom_buttons(screen)
 
 
 func build_title(screen: Vector2) -> void:
@@ -166,26 +167,29 @@ func make_star(radius: float, color: Color) -> Polygon2D:
 	star.color = color
 	return star
 
-
-func add_minigame_button(screen: Vector2) -> void:
+func add_bottom_buttons(screen: Vector2) -> void:
+	var w = (screen.x - 60) / 2.0
 	var open = GameState.minigame_unlocked
+	add_map_button("Minijuego" if open else "🔒 Nivel 3", Vector2(20, screen.y - 80), w, open, MINIGAME_SCENE)
+	add_map_button("Clóset", Vector2(40 + w, screen.y - 80), w, true, CLOSET_SCENE)
+
+func add_map_button(text: String, pos: Vector2, w: float, enabled: bool, scene: String) -> void:
 	var btn = Button.new()
-	btn.text = "Minijuego de canela" if open else "🔒 Pasa el nivel 3"
-	btn.disabled = not open
-	btn.size = Vector2(250, 54)
-	btn.position = Vector2((screen.x - 250) / 2.0, screen.y - 80)
-	var color = Color("#C97B4A") if open else Color("#B9A38F")
+	btn.text = text
+	btn.disabled = not enabled
+	btn.size = Vector2(w, 54)
+	btn.position = pos
+	var color = Color("#C97B4A") if enabled else Color("#B9A38F")
 	btn.add_theme_stylebox_override("normal", make_style(color, 20))
 	btn.add_theme_stylebox_override("hover", make_style(color.lightened(0.12), 20))
 	btn.add_theme_stylebox_override("pressed", make_style(color.darkened(0.15), 20))
 	btn.add_theme_stylebox_override("disabled", make_style(color, 20))
 	btn.add_theme_font_override("font", FONT)
-	btn.add_theme_font_size_override("font_size", 22)
+	btn.add_theme_font_size_override("font_size", 18)
 	btn.add_theme_color_override("font_color", Color.WHITE)
 	btn.add_theme_color_override("font_disabled_color", Color.WHITE)
-	btn.pressed.connect(func(): get_tree().change_scene_to_file(MINIGAME_SCENE))
+	btn.pressed.connect(func(): get_tree().change_scene_to_file(scene))
 	add_child(btn)
-
 
 func _on_level_pressed(i: int) -> void:
 	GameState.current_level = i

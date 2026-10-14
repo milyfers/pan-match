@@ -70,6 +70,7 @@ func build_rayitas() -> void:
 
 	# Recorta automáticamente el espacio transparente de la imagen
 	var full: Texture2D = load(RAYITAS_PATH)
+	
 	var tex = AtlasTexture.new()
 	tex.atlas = full
 	tex.region = Rect2(full.get_image().get_used_rect())
@@ -106,7 +107,6 @@ func show_hint() -> void:
 
 func basket_rect() -> Rect2:
 	return Rect2(rayitas.position + basket.position, basket.size)
-
 
 func _process(delta: float) -> void:
 	if not playing:

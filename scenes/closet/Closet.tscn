@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://dmme04b8pbnyk"]
+
+[ext_resource type="Script" uid="uid://bb32nbq7b5l2v" path="res://scripts/ui/closet.gd" id="1_vgk3g"]
+
+[node name="Closet" type="Control" unique_id=74011296]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_vgk3g")
