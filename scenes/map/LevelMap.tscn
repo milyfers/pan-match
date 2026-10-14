@@ -1,8 +1,16 @@
 [gd_scene format=3 uid="uid://yx0dfdtu81c8"]
 
 [ext_resource type="Script" uid="uid://csjykpr3lscf" path="res://scripts/map/level_map.gd" id="1_obbyc"]
+[ext_resource type="Texture2D" uid="uid://bsd7d3dvps78o" path="res://assets/sprites/ui/fondo.jpg" id="2_mv6rq"]
 
 [node name="LevelMap" type="Control" unique_id=117200170]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_obbyc")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=225250468]
+layout_mode = 0
+offset_right = 358.0
+offset_bottom = 643.0
+texture = ExtResource("2_mv6rq")
+expand_mode = 1

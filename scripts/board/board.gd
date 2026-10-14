@@ -260,7 +260,6 @@ func _input(event: InputEvent) -> void:
 		if is_valid_cell(cell):
 			handle_selection(cell)
 
-
 func pixel_to_grid(pos: Vector2) -> Vector2i:
 	var local = pos - board_offset
 	return Vector2i(floor(local.x / cell_size), floor(local.y / cell_size))
@@ -323,6 +322,8 @@ func swap_pieces(a: Vector2i, b: Vector2i) -> void:
 	check_game_state()
 
 	if not game_over:
+		if not has_possible_move():
+			await shuffle_board()
 		busy = false
 
 func do_swap(a: Vector2i, b: Vector2i) -> void:
@@ -669,6 +670,88 @@ func progress() -> int:
 func goal_met() -> bool:
 	return progress() >= target()
 
+# ¿Existe al menos un movimiento válido? (un power-up en el tablero siempre cuenta)
+func has_possible_move() -> bool:
+	for x in range(GRID_WIDTH):
+		for y in range(GRID_HEIGHT):
+			if grid[x][y].special != SP_NONE:
+				return true
+
+	for x in range(GRID_WIDTH):
+		for y in range(GRID_HEIGHT):
+			for d in [Vector2i(1, 0), Vector2i(0, 1)]:
+				var nx = x + d.x
+				var ny = y + d.y
+				if nx >= GRID_WIDTH or ny >= GRID_HEIGHT:
+					continue
+				swap_refs(x, y, nx, ny)
+				var ok = not find_matches().is_empty()
+				swap_refs(x, y, nx, ny)
+				if ok:
+					return true
+	return false
+
+
+func swap_refs(ax: int, ay: int, bx: int, by: int) -> void:
+	var tmp = grid[ax][ay]
+	grid[ax][ay] = grid[bx][by]
+	grid[bx][by] = tmp
+
+
+# Baraja las piezas hasta que no haya combinaciones hechas y sí haya jugadas
+func shuffle_board() -> void:
+	show_shuffle_label()
+
+	var pieces: Array = []
+	for x in range(GRID_WIDTH):
+		for y in range(GRID_HEIGHT):
+			pieces.append(grid[x][y])
+
+	var tries = 0
+	while true:
+		pieces.shuffle()
+		var i = 0
+		for x in range(GRID_WIDTH):
+			for y in range(GRID_HEIGHT):
+				grid[x][y] = pieces[i]
+				i += 1
+		tries += 1
+		if (find_matches().is_empty() and has_possible_move()) or tries >= 50:
+			break
+
+	var tween = create_tween().set_parallel(true)
+	for x in range(GRID_WIDTH):
+		for y in range(GRID_HEIGHT):
+			var p = grid[x][y]
+			p.grid_position = Vector2i(x, y)
+			tween.tween_property(p, "position", grid_to_pixel(x, y), 0.4) \
+				.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	await tween.finished
+
+	# Por si el barajado dejó alguna combinación (muy raro)
+	if not find_matches().is_empty():
+		await resolve_matches()
+
+
+func show_shuffle_label() -> void:
+	var screen = get_viewport_rect().size
+	var lbl = Label.new()
+	lbl.text = "¡Mezclando!"
+	lbl.size = Vector2(screen.x, 60)
+	lbl.position = Vector2(0, screen.y / 2.0 - 30)
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl.z_index = 30
+	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	lbl.add_theme_font_override("font", COMBO_FONT)
+	lbl.add_theme_font_size_override("font_size", 36)
+	lbl.add_theme_color_override("font_color", Color("#FFF3C4"))
+	lbl.add_theme_color_override("font_outline_color", Color("#4A2C1A"))
+	lbl.add_theme_constant_override("outline_size", 8)
+	add_child(lbl)
+	var t = create_tween()
+	t.tween_interval(0.7)
+	t.tween_property(lbl, "modulate:a", 0.0, 0.3)
+	t.tween_callback(lbl.queue_free)
 
 # ---------- EFECTOS ----------
 
@@ -750,7 +833,6 @@ func shake(strength: float = 8.0) -> void:
 		t.tween_property(self, "position",
 			origin + Vector2(randf_range(-1, 1), randf_range(-1, 1)) * strength, 0.04)
 	t.tween_property(self, "position", origin, 0.04)
-
 
 func flash_rect(pos: Vector2, size_: Vector2) -> void:
 	var r = ColorRect.new()

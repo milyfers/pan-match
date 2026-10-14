@@ -1,8 +1,16 @@
 [gd_scene format=3 uid="uid://esxw8a8dy6di"]
 
 [ext_resource type="Script" uid="uid://bip7pgoa4fldv" path="res://scenes/minigame/canela_game.gd" id="1_dmgsd"]
+[ext_resource type="Texture2D" uid="uid://bsd7d3dvps78o" path="res://assets/sprites/ui/fondo.jpg" id="2_hjxmw"]
 
 [node name="CanelaGame" type="Control" unique_id=840861272]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_dmgsd")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=395810528]
+layout_mode = 0
+offset_right = 357.0
+offset_bottom = 640.0
+texture = ExtResource("2_hjxmw")
+expand_mode = 1
