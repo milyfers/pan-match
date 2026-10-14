@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://dlfak8tjwehp7"]
+
+[ext_resource type="Script" uid="uid://i0xfswi4grhf" path="res://scripts/board/board.gd" id="1_6puts"]
+[ext_resource type="Texture2D" uid="uid://bsd7d3dvps78o" path="res://assets/sprites/ui/fondo.jpg" id="2_4vko3"]
+
+[node name="Board" type="Node2D" unique_id=1660743858]
+script = ExtResource("1_6puts")
+
+[node name="Fondo" type="TextureRect" parent="." unique_id=1206593870]
+offset_right = 366.0
+offset_bottom = 643.0
+texture = ExtResource("2_4vko3")
+expand_mode = 1

@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://esxw8a8dy6di"]
+
+[ext_resource type="Script" uid="uid://bip7pgoa4fldv" path="res://scenes/minigame/canela_game.gd" id="1_dmgsd"]
+
+[node name="CanelaGame" type="Control" unique_id=840861272]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_dmgsd")

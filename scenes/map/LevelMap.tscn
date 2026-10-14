@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://yx0dfdtu81c8"]
+
+[ext_resource type="Script" uid="uid://csjykpr3lscf" path="res://scripts/map/level_map.gd" id="1_obbyc"]
+
+[node name="LevelMap" type="Control" unique_id=117200170]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_obbyc")
